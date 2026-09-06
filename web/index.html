@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!--
+    If you are serving your web app in a path other than the root, change the
+    href value below to reflect the base path you are serving from.
+
+    The path provided below has to start and end with a slash "/" in order for
+    it to work correctly.
+
+    For more details:
+    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
+
+    This is a placeholder for base href that will be replaced by the value of
+    the `--base-href` argument provided to `flutter build`.
+  -->
+  <base href="$FLUTTER_BASE_HREF">
+
+  <meta charset="UTF-8">
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="description" content="Smart contract test">
+
+  <!-- iOS meta tags & icons -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="escrowtest">
+  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="favicon.png"/>
+
+  <title>escrowtest</title>
+  <link rel="manifest" href="manifest.json">
+</head>
+<body>
+  <script>
+  // 1. ウォレット接続
+  // アカウント選択ポップアップを毎回強制表示して接続する
+  async function connectWallet() {
+    if (typeof window.ethereum !== 'undefined') {
+    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+    return accounts[0];
+    } else {
+      throw new Error("MetaMask is not installed!");
+    }
+  }
+
+  const SEPOLIA_CHAIN_ID = '0xaa36a7'; // 11155111
+
+  // Sepolia ネットワークへ切り替える（無ければ追加する）
+  async function switchToSepolia() {
+    if (typeof window.ethereum === 'undefined') return;
+
+    try {
+      // 1. Sepoliaへの切り替えを要求
+      await window.ethereum.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: SEPOLIA_CHAIN_ID }],
+      });
+    } catch (switchError) {
+      // 4902エラー: SepoliaがMetaMaskに追加されていない場合
+      if (switchError.code === 4902) {
+        try {
+          await window.ethereum.request({
+            method: 'wallet_addEthereumChain',
+            params: [
+              {
+                chainId: SEPOLIA_CHAIN_ID,
+                chainName: 'Sepolia Test Network',
+                nativeCurrency: { name: 'Sepolia Ether', symbol: 'ETH', decimals: 18 },
+                rpcUrls: ['https://rpc.sepolia.org'],
+                blockExplorerUrls: ['https://sepolia.etherscan.io'],
+              },
+            ],
+          });
+        } catch (addError) {
+          throw new Error("Failed to add Sepolia network.");
+        }
+      } else {
+        throw switchError;
+      }
+    }
+  }
+
+  // 2. トランザクション送信 (Dartから受け取ったCall Dataを実行)
+  async function sendTransaction(toAddress, dataHex) {
+    if (typeof window.ethereum !== 'undefined') {
+      await switchToSepolia();
+      const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+      const fromAddress = accounts[0];
+
+      const txParams = {
+        from: fromAddress,
+        to: toAddress,
+        data: dataHex,
+      };
+
+      // ウォレットのポップアップを起動
+      const txHash = await window.ethereum.request({
+        method: 'eth_sendTransaction',
+        params: [txParams],
+      });
+
+      return txHash;
+    } else {
+      throw new Error("MetaMask is not installed!");
+    }
+  }
+  </script>
+  <script src="flutter_bootstrap.js" async></script>
+</body>
+</html>
