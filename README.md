@@ -6,6 +6,8 @@ Smart contract test
 
 [リンク](https://sepolia.etherscan.io/address/0x654d644d6cc1e1f74c0ce3ad9958487ef6446fdf)
 
+[Smart Contract Is Here](https://github.com/ChocoTanaka/Escrow-contract)
+
 これは、このスマートコントラクトの実験用のコードである。
 
 ## What for
