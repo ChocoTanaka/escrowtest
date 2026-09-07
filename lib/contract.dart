@@ -21,20 +21,21 @@ late int Id;
 final escrowIdString = '202609060006';
 
 
-final BigInt DeadlineBigInt = BigInt.from(1788706800);
+final BigInt DeadlineBigInt = BigInt.from(1788706800); //UNIX TIME
 
 final String jpycAddress = '0xE7C3D8C9a439feDe00D2600032D5dB0Be71C3c29';
 
 final jpycTokenAddress = EthereumAddress.fromHex(jpycAddress); // SepoliaのJPYCテストトークンアドレス
 
 // アドレス設定
-final String Address1 = '0xac40D63C25096e7048F25D8BeD49c9b1b03955D5'; //base
-final String Address2 = '0x06570ceeE6D310f806398A2Ea2daC8B4B37310f9'; //meta2
+final String Address1 = 'Address1'; //base
+final String Address2 = 'Address2'; //meta2
+final String Address3 = 'Address3';
 final contract = '0x654D644d6cC1e1F74C0CE3AD9958487eF6446fdF';
 
 final payer = EthereumAddress.fromHex(Address1);
 final payee = EthereumAddress.fromHex(Address2);
-final arbiter = EthereumAddress.fromHex('0x529373543ec53D7Cf808283cA310c8D43ebc113f'); // ※コントラクトによってはcreateEscrowに含まれるか確認
+final arbiter = EthereumAddress.fromHex(Address3); // ※コントラクトによってはcreateEscrowに含まれるか確認
 
 final contractAddress = EthereumAddress.fromHex(contract);
 
